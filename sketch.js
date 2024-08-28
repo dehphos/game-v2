@@ -9,14 +9,48 @@ class Player {
     this.sx = sx
     this.sy = sy
     this.onFloor = false
-    this.onPlatform = false
+    this.onPlatform = true
     this.v = sqrt((this.vx * this.vx) + (this.vy * this.vy))
+    this.last_left
+  }
+  update(){
+    pl.vx = pl.vx + pl.ax                                           
+    pl.vy = pl.vy + pl.ay                                          
+    pl.x = pl.x + pl.vx
+    pl.y = pl.y + pl.vy
+  }
+  draw(){
+    if(!this.onFloor){
+    if(this.onPlatform){
+      if(this.last_left){image(ch_l,this.x -50 ,this.y - 45 ,this.sx+100 ,this.sy+80)}else{image(ch_r,this.x -50 ,this.y - 45 ,this.sx+100 ,this.sy+80)}
+    }else{
+      if(this.last_left){image(ch_l_j,this.x -50 ,this.y - 45 ,this.sx+100 ,this.sy+80)}else{image(ch_r_j,this.x -50 ,this.y - 45 ,this.sx+100 ,this.sy+80)}
+    }}
+    //rect(pl.x,pl.y,pl.sx,pl.sy)
   }
 }
 class Vertex {
   constructor(x, y) {
     this.x = x
     this.y = y
+  }
+}
+class bg{
+  constructor(x,y){
+    this.x = x
+    this.y = y
+    this.out = false
+    this.v = bgv
+  }
+  draw(){
+    image(bgimg, this.x, this.y , ww, wh)
+  }
+  update(){
+    this.y = this.y + this.v
+    if(bg2.y >= 0){
+      bg1.y = bg1.y - wh
+      bg2.y = bg2.y - wh
+    }
   }
 }
 class Score{
@@ -27,8 +61,8 @@ class Score{
   }
   draw(){
     push()
-    stroke(173, 0, 179)    
-    fill(173, 0, 179)                                      
+    stroke(0)    
+    fill(0)                                      
     textSize(50)   
     if(sc.c > sc.h){sc.h = sc.c}
     text("current score: " + this.c, 20 , 80 )
@@ -37,8 +71,8 @@ class Score{
   }
   drawhighscore(){
     push()
-    fill(173, 0, 179)
-    stroke(173, 0, 179)                                          
+    fill(0)
+    stroke(0)                                          
     textSize(50)   
     text("high score: " + this.h, 650 , 80 )
     pop()
@@ -77,7 +111,8 @@ class Platform {
 
   }
   draw(){
-    rect(this.x2,this.y2,this.sx,this.sy)
+    //rect(this.x2,this.y2,this.sx,this.sy)
+    image(platimg, this.x2, this.y2, this.sx, this.sy)
   }
   collide(){
     if(pl.y + pl.sy > this.y3 - 5 && pl.y + pl.sy < this.y1 && pl.x < this.x3 && pl.x + pl.sx> this.x1 && pl.vy >= 0){               
@@ -98,6 +133,12 @@ var hsreset = false
 var dead = false
 var pvx = 0
 var platimg
+var bgimg
+var ch_r_j
+var ch_r
+var ch_l
+var ch_l_j
+var bgv = 2
 function keyPressed(){
   start = true
   if(dead){
@@ -106,10 +147,18 @@ function keyPressed(){
 }
 function preload() {
  highscore = getItem('hs')
- platimg = loadImage('platform.png',console.log("platform image loaded"))
+ platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
+ bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
+ ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
+ ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
+ ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
+ ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
+ 
 }
 function setup() {
   createCanvas(ww, wh);
+  bg1 = new bg(0,0)
+  bg2 = new bg(0,-1500)
   sc = new Score(0,highscore)
   pl = new Player(700, 1220, 50, 80)
   v1 = new Vertex(600,1350)
@@ -152,20 +201,21 @@ function resetHighScore(){
 }
 function draw() {
   if(start == false){
-    background(220);
+    bg1.draw()
     fill(0)
     stroke(0) 
     for (var key in plat){             
       plat[key].draw()}
-    rect(pl.x,pl.y,pl.sx,pl.sy)
-    fill(207, 23, 164)
-    stroke(207, 23, 164)                                          
+    pl.draw()
+    fill(20)
+    stroke(0)                                          
     textSize(85) 
     sc.drawhighscore()  
-    text("press any key to start", 70 , 450 ,)
+    text("Press any key to start", 75 , 750)
   }else{
+  bg1.draw()
+  bg2.draw()
   stroke(0) 
-  background(220);
   fill(0)
   if(plat.length <= 7){
     pvx = (Math.floor(Math.random()*sc.c*0.1))
@@ -199,9 +249,11 @@ function draw() {
 
   if(keyIsPressed){
     if(keyIsDown(65)){                                        //                                                       
-      pl.vx = -20                                             //                                                          
+      pl.vx = -15
+      pl.last_left = true                                     //                                                          
     }else if(keyIsDown(68)){                                  //      KEYBOARD CONTROLS                                                                                                     
-      pl.vx = 20                                              //                                                   
+      pl.vx = 15 
+      pl.last_left = false                                    //                                                   
     }else if(!keyIsDown(68) && !keyIsDown(65)){pl.vx = 0}     //                                                          
     if(keyIsDown(87) ){                                       //
       if(pl.onFloor == true || pl.onPlatform == true){        //                                                            
@@ -232,21 +284,26 @@ function draw() {
   for(var key in plat){
     plat[key].update()
   }   
-  pl.vx = pl.vx + pl.ax                                           // ACCELERATION SPEED CALCULATIONS
-  pl.vy = pl.vy + pl.ay                                           //     MUST BE LAST !!!!!!
-  pl.x = pl.x + pl.vx
-  pl.y = pl.y + pl.vy
-  rect(pl.x,pl.y,pl.sx,pl.sy)
+  bg1.update()
+  bg2.update()
+  pl.update()
+  pl.draw()
   sc.draw()
   inst = false
 
   if(pl.onFloor){
-    fill(207, 23, 164)
-    stroke(207, 23, 164)                                          // CHECK IF THE GAME IS FINISHED
-    textSize(250)   
-    text("you ded", 70 , 450 ,)
+    fill(0)
+    stroke(0)                                          // CHECK IF THE GAME IS FINISHED
+    textSize(200)   
+    text("You Died", 70 , 750 )
     textSize(75)  
-    text("Press any key to restart", 100 , 580 ,)
+    text("Press any key to restart", 100 , 880 )
+    push()
+    translate(pl.x, pl.y);
+    imageMode(CENTER);
+    rotate(-PI/2)
+    image(ch_r_j, -50, 0 ,pl.sx+100 ,pl.sy+80)
+    pop()
     if(hsreset){storeItem("hs",0)}else{
     storeItem("hs",sc.h)}
     dead = true
