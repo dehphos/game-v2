@@ -254,9 +254,9 @@ function draw() {
     pvx = (Math.floor(Math.random()*sc.c*0.1))
     if (Math.random() > 0.5){pvx = -pvx}
     var xcor = Math.floor(Math.random() * 800)
-    var ycor = -100
-    var v1 = new Vertex(xcor, ycor+58)
-    var v2 = new Vertex(xcor+200, ycor + 8)
+    var ycor = plat[6].y3 - 200
+    var v1 = new Vertex(xcor, ycor+50)
+    var v2 = new Vertex(xcor+200, ycor)
     var nplat = new Platform(v1, v2, pv,pvx,Math.random())
     plat.push(nplat)
     console.log("yeni platform eklendi")
