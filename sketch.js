@@ -168,7 +168,7 @@ var ch_l
 var ch_l_j
 var bgv = 2
 function keyPressed(){
-  start = true
+  if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
   if(dead){
     window.location.reload()
   }
@@ -244,6 +244,11 @@ function draw() {
     textSize(85) 
     sc.drawhighscore()  
     text("Press any key to start", 75 , 750)
+  }else if (start == "paused"){
+    textSize(85) 
+    text("Game Paused" ,250 ,750)
+    textSize(50)
+    text("Press any button to resume",200,800)
   }else{
   if(pv > pvd ){pv = pv - 0.5}else if(pv < pvd){pv = pv + 0.5}
   bg1.draw()
@@ -293,14 +298,14 @@ function draw() {
   }
 
   if(keyIsPressed){
-    if(keyIsDown(65)){                                        //                                                       
+    if(keyIsDown(65)||keyIsDown(37)){                                        //                                                       
       pl.vx = -15
       pl.last_left = true                                     //                                                          
-    }else if(keyIsDown(68)){                                  //      KEYBOARD CONTROLS                                                                                                     
+    }else if(keyIsDown(68)||keyIsDown(39)){                                  //      KEYBOARD CONTROLS                                                                                                     
       pl.vx = 15 
       pl.last_left = false                                    //                                                   
-    }else if(!keyIsDown(68) && !keyIsDown(65)){pl.vx = 0}     //                                                          
-    if(keyIsDown(87) ){                                       //
+    }else if(!keyIsDown(68) && !keyIsDown(65) && !keyIsDown(39) && !keyIsDown(37)){pl.vx = 0}     //                                                          
+    if(keyIsDown(87) ||keyIsDown(38) ){                                       //
       if(pl.onFloor == true || pl.onPlatform == true){        //                                                            
       inst = true                                             //      KEYBOARD CONTROLS  
       pl.onPlatform = false                                   //                                                            
@@ -354,3 +359,4 @@ function draw() {
     dead = true
     noLoop()
   }}}
+
