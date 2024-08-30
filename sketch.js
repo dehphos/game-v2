@@ -80,7 +80,7 @@ class Score{
 
 }
 class Platform {
-  constructor(v1, v3, vy, vx , boost) {
+  constructor(v1, v3, vy, vx) {
     this.x1 = v1.x
     this.y1 = v1.y
     this.x2 = v1.x
@@ -89,39 +89,20 @@ class Platform {
     this.y3 = v3.y
     this.x4 = v3.x
     this.y4 = v1.y
-    this.boostpos = Math.random()*100+50
-    this.boostx1 = this.x2 + this.boostpos
-    this.boosty1 = this.y2 + 10
-    this.boostx2 = this.boostx1 + 20
-    this.boosty2 = this.y2
-    this.boostsx = this.boostx2 - this.boostx1
-    this.boostsy = this.boosty1 - this.boosty2
-    if (boost < 0.2)
-    {this.boost = true
-      console.log("x1= " + this.boostx1)
-      console.log("y1= " + this.boosty1)
-      console.log("x2= " + this.boostx2)
-      console.log("y2= " + this.boosty2)
-      console.log("sx= " + this.boostsx)
-      console.log("sy= " + this.boostsy)
-    }else{this.boost = false}
     this.sx = abs(this.x1 - this.x3)
     this.sy = abs(this.y1 - this.y3)
-    this.vy = pv
+    this.vy = vy
     this.vx = vx
     this.vxb = false
-    this.touched = false 
+    this.touched = false
   }
   update(){
-      this.boostx1 = this.x2 + this.boostpos
-      this.boosty1 = this.y2 + 10
-      this.boostx2 = this.boostx1 + 20
-      this.boosty2 = this.y2
       this.y1 = this.y1 + this.vy
       this.y2 = this.y2 + this.vy
       this.y3 = this.y3 + this.vy
       this.y4 = this.y4 + this.vy
       if (this.x1 <= 0 || this.x3 >= ww){
+        console.log("a")
         this.vx = this.vx * -1}
       this.x1 = this.x1 + this.vx
       this.x2 = this.x2 + this.vx
@@ -131,20 +112,12 @@ class Platform {
   }
   draw(){
     //rect(this.x2,this.y2,this.sx,this.sy)
-    if (this.boost){
-      rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
-    }
     image(platimg, this.x2, this.y2, this.sx, this.sy)
   }
   collide(){
     if(pl.y + pl.sy > this.y3 - 5 && pl.y + pl.sy < this.y1 && pl.x < this.x3 && pl.x + pl.sx> this.x1 && pl.vy >= 0){               
         return(true)                                                                                                                                                                      
   }}
-  isboosted(){
-    if(pl.y + pl.sy > this.boosty2  && pl.y + pl.sy < this.boosty1 && pl.x < this.boostx2 && pl.x + pl.sx> this.boostx1 && pl.vy >= 0 && this.boost){
-      return(true)
-    }
-  } 
 }
 
 
@@ -155,7 +128,6 @@ var g = 1
 var inst
 var plat = []
 var pv = 4
-var pvd = 4
 var highscore
 var hsreset = false
 var dead = false
@@ -217,10 +189,6 @@ function setup() {
   v2 = new Vertex(800,100)
   p7 = new Platform(v1,v2,pv,pvx)
   plat.push(p7)
-  v1 = new Vertex(200,-50)
-  v2 = new Vertex(400,-100)
-  p7 = new Platform(v1,v2,pv,pvx)
-  plat.push(p7)
   button = createButton('reset highscore');
   button.position(300,1500)
   button.size(400, 50)
@@ -245,7 +213,6 @@ function draw() {
     sc.drawhighscore()  
     text("Press any key to start", 75 , 750)
   }else{
-  if(pv > pvd ){pv = pv - 0.5}else if(pv < pvd){pv = pv + 0.5}
   bg1.draw()
   bg2.draw()
   stroke(0) 
@@ -255,41 +222,29 @@ function draw() {
     if (Math.random() > 0.5){pvx = -pvx}
     var xcor = Math.floor(Math.random() * 800)
     var ycor = -100
-    var v1 = new Vertex(xcor, ycor+58)
-    var v2 = new Vertex(xcor+200, ycor + 8)
-    var nplat = new Platform(v1, v2, pv,pvx,Math.random())
+    var v1 = new Vertex(xcor, ycor)
+    var v2 = new Vertex(xcor+200, ycor-50)
+    var nplat = new Platform(v1, v2, pv,pvx)
     plat.push(nplat)
-    console.log("yeni platform eklendi")
   }
 
 
-  for (var key in plat){      
-    if(key > 0){
-      var mes = plat[key].y1 - plat[key -1].y1
-      k2 = key -1
-      console.log(key + " ile " + k2 + " arasindaki mesafe: "+mes)}         
+  for (var key in plat){                
     plat[key].draw()
-    plat[key].vy = pv
     if (plat[key].collide()){
       pl.y = plat[key].y2 - (pl.sy)                                      
       pl.vy = pv                                                          
       pl.ay = 0                                                          
       pl.onPlatform = true  
       if(plat[key].touched == false){
+        sc.c = sc.c + 1
         plat[key].touched = true
       }
     }                                          
     if(plat[key].y1 > 1550){
       plat.splice(key,1)
-        sc.c = sc.c + 1
     }
-    if(plat[key].isboosted()){
-      inst = true                                              
-      pl.onPlatform = false                                                                                      
-      pl.vy = -30  
-      pv = 22
-      for (var key in plat){plat[key].vy = 20}
-    }
+    
   }
 
   if(keyIsPressed){
