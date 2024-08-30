@@ -29,6 +29,16 @@ class Player {
     //rect(pl.x,pl.y,pl.sx,pl.sy)
   }
 }
+class Startup{
+  constructor(x,y,vy){
+    this.x = x
+    this.y = y
+    this.v = vy
+  }
+  draw(){
+
+  }
+}
 class Vertex {
   constructor(x, y) {
     this.x = x
@@ -127,7 +137,7 @@ class Platform {
     if (this.boost){
       rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
     }
-    image(platimg, this.x2, this.y2, this.sx, this.sy)
+    image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
   }
   collide(){
     if(pl.y + pl.sy > this.y3 - 5 && pl.y + pl.sy < this.y1 && pl.x < this.x3 && pl.x + pl.sx> this.x1 && pl.vy >= 0){               
