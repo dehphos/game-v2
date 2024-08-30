@@ -97,14 +97,7 @@ class Platform {
     this.boostsx = this.boostx2 - this.boostx1
     this.boostsy = this.boosty1 - this.boosty2
     if (boost < 0.2)
-    {this.boost = true
-      console.log("x1= " + this.boostx1)
-      console.log("y1= " + this.boosty1)
-      console.log("x2= " + this.boostx2)
-      console.log("y2= " + this.boosty2)
-      console.log("sx= " + this.boostsx)
-      console.log("sy= " + this.boostsy)
-    }else{this.boost = false}
+    {this.boost = true}else{this.boost = false}
     this.sx = abs(this.x1 - this.x3)
     this.sy = abs(this.y1 - this.y3)
     this.vy = pv
@@ -271,8 +264,7 @@ function draw() {
   for (var key in plat){      
     if(key > 0){
       var mes = plat[key].y1 - plat[key -1].y1
-      k2 = key -1
-      console.log(key + " ile " + k2 + " arasindaki mesafe: "+mes)}         
+      k2 = key -1}         
     plat[key].draw()
     plat[key].vy = pv
     if (plat[key].collide()){
