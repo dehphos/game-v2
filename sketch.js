@@ -103,6 +103,8 @@ class Platform {
     this.y3 = v3.y
     this.x4 = v3.x
     this.y4 = v1.y
+    this.ladder = false
+    if(ladder < 0.5){this.ladder = true , this.y1 = this.y1 - 185 , this.y2 = this.y2 -185 , this.y3 = this.y3 - 185 , this.y4 = this.y4 - 185}
     this.boostpos = Math.random()*100+50
     this.boostx1 = this.x2 + this.boostpos
     this.boosty1 = this.y2 + 10
@@ -116,7 +118,13 @@ class Platform {
     this.sy = abs(this.y1 - this.y3)
     this.vy = pv
     this.vx = vx
-    if(ladder){this.ladder = true}else{this.ladder = false}
+    this.ladderpos = Math.random()*100+20
+    this.ladderx1 = this.x2 + this.ladderpos
+    this.laddery1 = this.y2 +30
+    this.ladderx2 = this.ladderx1 + 60
+    this.laddery2 = this.y2 +210
+    this.laddersx = this.ladderx2 - this.ladderx1
+    this.laddersy = this.laddery2 - this.laddery1
     this.vxb = false
     this.touched = false 
     this.noimg = false
@@ -131,6 +139,10 @@ class Platform {
       this.y2 = this.y2 + this.vy
       this.y3 = this.y3 + this.vy
       this.y4 = this.y4 + this.vy
+      this.ladderx1 = this.x2 + this.ladderpos
+      this.laddery1 = this.y2 +30
+      this.ladderx2 = this.ladderx1 + 60
+      this.laddery2 = this.y2 +210
       if (this.x1 <= 0 || this.x3 >= ww){
         this.vx = this.vx * -1}
       this.x1 = this.x1 + this.vx
@@ -146,6 +158,11 @@ class Platform {
      // rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
       image(spr , this.boostx1 -15 , this.boosty1 -10 , this.boostsx +25 , this.boostsy+25)
     }
+    if(this.ladder){
+      rect(this.ladderx1 , this.laddery1 , 3 , this.laddersy)
+      rect(this.ladderx2 - 3, this.laddery1 , 3 , this.laddersy)
+      rect(this.ladderx1 , this.laddery2  , this.laddersx , 5)
+    }
     if(!this.noimg){
       image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
       }
@@ -155,10 +172,14 @@ class Platform {
         return(true)                                                                                                                                                                      
   }}
   isboosted(){
-    if(pl.y + pl.sy > this.boosty2  && pl.y + pl.sy < this.boosty1 && pl.x < this.boostx2 && pl.x + pl.sx> this.boostx1 && pl.vy >= 0 && this.boost){
+    if(pl.y + pl.sy > this.boosty2 -10  && pl.y + pl.sy < this.boosty1 +10 && pl.x < this.boostx2 && pl.x + pl.sx> this.boostx1 && pl.vy >= 0 && this.boost){
       return(true)
-    }
-  } 
+  }} 
+  onladder(){
+    if(pl.y + pl.sy < this.laddery2 +10   && pl.y + pl.sy > this.laddery2 -15 && pl.x < this.ladderx2 && pl.x + pl.sx> this.ladderx1 && pl.vy >= 0){
+      console.log("ladder touched")                  
+      return(true)                                                                                                                                                                  
+  }}
 }
 
 
@@ -239,12 +260,12 @@ function setup() {
   plat.push(p4)
   v1 = new Vertex(600,550)
   v2 = new Vertex(800,500)
-  p6 = new Platform(v1,v2,pv,pvx,0.1)
+  p6 = new Platform(v1,v2,pv,pvx,0.1,0.1)
   plat.push(p6)
   v1 = new Vertex(450,350)
   v2 = new Vertex(650,300)
   p7 = new Platform(v1,v2,pv,pvx)
-  plat.push(p7)
+ // plat.push(p7)
   v1 = new Vertex(600,150)
   v2 = new Vertex(800,100)
   p7 = new Platform(v1,v2,pv,pvx)
@@ -297,7 +318,7 @@ function draw() {
     var ycor = plat[plat.length-1].y3 - 200
     var v1 = new Vertex(xcor, ycor+50)
     var v2 = new Vertex(xcor+200, ycor)
-    var nplat = new Platform(v1, v2, pv,pvx,Math.random())
+    var nplat = new Platform(v1, v2, pv,pvx,Math.random(),Math.random())
     plat.push(nplat)
   }
 
@@ -312,13 +333,19 @@ function draw() {
       pl.vy = pv                                                          
       pl.ay = 0                                                          
       pl.onPlatform = true  
-      if(plat[key].touched == false){
-        plat[key].touched = true
-      }
-    }                                          
+    }else if(plat[key].onladder()){     
+      pl.y = plat[key].laddery2 - (pl.sy) - 15                       
+      pl.vy = pv                                                          
+      pl.ay = 0                                                          
+      pl.onPlatform = true  
+    }                                
     if(plat[key].y1 > 1550){
-      plat.splice(key,1)
+      if(plat[key].ladder){
+        sc.c = sc.c + 2
+      }else{
         sc.c = sc.c + 1
+      }
+      plat.splice(key,1)
     }
     if(plat[key].isboosted()){
       inst = true                                              
