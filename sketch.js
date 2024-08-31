@@ -104,7 +104,7 @@ class Platform {
     this.x4 = v3.x
     this.y4 = v1.y
     this.ladder = false
-    if(ladder < 0.5){this.ladder = true , this.y1 = this.y1 - 185 , this.y2 = this.y2 -185 , this.y3 = this.y3 - 185 , this.y4 = this.y4 - 185}
+    if(ladder < 0.2){this.ladder = true , this.y1 = this.y1 - 185 , this.y2 = this.y2 -185 , this.y3 = this.y3 - 185 , this.y4 = this.y4 - 185}
     this.boostpos = Math.random()*100+50
     this.boostx1 = this.x2 + this.boostpos
     this.boosty1 = this.y2 + 10
