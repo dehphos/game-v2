@@ -12,8 +12,10 @@ class Player {
     this.onPlatform = true
     this.v = sqrt((this.vx * this.vx) + (this.vy * this.vy))
     this.last_left
+    this.hasjumped = false
   }
   update(){
+    
     pl.vx = pl.vx + pl.ax                                           
     pl.vy = pl.vy + pl.ay                                          
     pl.x = pl.x + pl.vx
@@ -51,12 +53,14 @@ class bg{
     this.y = y
     this.out = false
     this.v = bgv
+    this.img = bgimg
   }
   draw(){
-    image(bgimg, this.x, this.y , ww, wh)
+    image(this.img, this.x, this.y , ww, wh)
   }
   update(){
-    this.y = this.y + this.v
+    if(pl.hasjumped){
+    this.y = this.y + this.v}
     if(bg2.y >= 0){
       bg1.y = bg1.y - wh
       bg2.y = bg2.y - wh
@@ -114,8 +118,10 @@ class Platform {
     this.vx = vx
     this.vxb = false
     this.touched = false 
+    this.noimg = false
   }
   update(){
+    if(pl.hasjumped){
       this.boostx1 = this.x2 + this.boostpos
       this.boosty1 = this.y2 + 10
       this.boostx2 = this.boostx1 + 20
@@ -129,7 +135,7 @@ class Platform {
       this.x1 = this.x1 + this.vx
       this.x2 = this.x2 + this.vx
       this.x3 = this.x3 + this.vx
-      this.x4 = this.x4 + this.vx
+      this.x4 = this.x4 + this.vx}
 
   }
   draw(){
@@ -137,8 +143,9 @@ class Platform {
     if (this.boost){
       rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
     }
+    if(!this.noimg){
     image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
-  }
+    }}
   collide(){
     if(pl.y + pl.sy > this.y3 - 5 && pl.y + pl.sy < this.y1 && pl.x < this.x3 && pl.x + pl.sx> this.x1 && pl.vy >= 0){               
         return(true)                                                                                                                                                                      
@@ -169,6 +176,8 @@ var ch_r_j
 var ch_r
 var ch_l
 var ch_l_j
+var bg0
+var bg0_1
 var bgv = 2
 function keyPressed(){
   if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
@@ -184,26 +193,40 @@ function preload() {
  ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
  ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
  ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
+ bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
+ bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
  
 }
 function setup() {
   createCanvas(ww, wh);
   bg1 = new bg(0,0)
   bg2 = new bg(0,-1500)
+  bg3 = new bg(0,0)
+  bg3.img = bg0
+  bg3.v = 4
+  bg4 = new bg(0,0)
+  bg4.img = bg0_1
   sc = new Score(0,highscore)
-  pl = new Player(700, 1220, 50, 80)
-  v1 = new Vertex(600,1350)
-  v2 = new Vertex(800,1300)
+  pl = new Player(700, 1280, 50, 80)
+  v1 = new Vertex(0,1400)
+  v2 = new Vertex(1000,1350)
   p1 = new Platform(v1,v2,pv,pvx)
+  p1.noimg = true
   plat.push(p1)
-  v1 = new Vertex(200,1150)
-  v2 = new Vertex(400,1100)
+  v1 = new Vertex(0,1200)
+  v2 = new Vertex(335,1120)
   p2 = new Platform(v1,v2,pv,pvx)
+  p2.noimg = true
   plat.push(p2)
-  v1 = new Vertex(650,950)
-  v2 = new Vertex(850,900)
+  v1 = new Vertex(780,1080)
+  v2 = new Vertex(1000,1030)
   p3 = new Platform(v1,v2,pv,pvx)
+  p3.noimg = true
   plat.push(p3)
+  v1 = new Vertex(450,950)
+  v2 = new Vertex(650,900)
+  p4 = new Platform(v1,v2,pv,pvx)
+  plat.push(p4)
   v1 = new Vertex(150,750)
   v2 = new Vertex(350,700)
   p4 = new Platform(v1,v2,pv,pvx)
@@ -236,7 +259,8 @@ function resetHighScore(){
 }
 function draw() {
   if(start == false){
-    bg1.draw()
+    bg4.draw()
+    bg3.draw()
     fill(0)
     stroke(0) 
     for (var key in plat){             
@@ -256,6 +280,8 @@ function draw() {
   if(pv > pvd ){pv = pv - 0.5}else if(pv < pvd){pv = pv + 0.5}
   bg1.draw()
   bg2.draw()
+  bg4.draw()
+  bg3.draw()
   stroke(0) 
   fill(0)
   if(plat.length <= 7){
@@ -309,7 +335,8 @@ function draw() {
     }else if(!keyIsDown(68) && !keyIsDown(65) && !keyIsDown(39) && !keyIsDown(37)){pl.vx = 0}     //                                                          
     if(keyIsDown(87) ||keyIsDown(38) ){                                       //
       if(pl.onFloor == true || pl.onPlatform == true){        //                                                            
-      inst = true                                             //      KEYBOARD CONTROLS  
+      inst = true    
+      pl.hasjumped = true                                         //      KEYBOARD CONTROLS  
       pl.onPlatform = false                                   //                                                            
       pl.vy = -22                                             //  
       pl.ay = g                                               //                                  
@@ -338,6 +365,8 @@ function draw() {
   }   
   bg1.update()
   bg2.update()
+  bg3.update()
+  bg4.update()
   pl.update()
   pl.draw()
   sc.draw()
