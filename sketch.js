@@ -104,7 +104,7 @@ class Platform {
     this.x4 = v3.x
     this.y4 = v1.y
     this.ladder = false
-    if(ladder < 0.2){this.ladder = true , this.y1 = this.y1 - 185 , this.y2 = this.y2 -185 , this.y3 = this.y3 - 185 , this.y4 = this.y4 - 185}
+    if(ladder < 0.1){this.ladder = true , this.y1 = this.y1 - 185 , this.y2 = this.y2 -185 , this.y3 = this.y3 - 185 , this.y4 = this.y4 - 185}
     this.boostpos = Math.random()*100+50
     this.boostx1 = this.x2 + this.boostpos
     this.boosty1 = this.y2 + 10
@@ -118,6 +118,9 @@ class Platform {
     this.sy = abs(this.y1 - this.y3)
     this.vy = pv
     this.vx = vx
+    if(this.ladder){
+      this.vx = this.vx/4
+    }
     this.ladderpos = Math.random()*100+20
     this.ladderx1 = this.x2 + this.ladderpos
     this.laddery1 = this.y2 +30
@@ -162,6 +165,9 @@ class Platform {
       rect(this.ladderx1 , this.laddery1 , 3 , this.laddersy)
       rect(this.ladderx2 - 3, this.laddery1 , 3 , this.laddersy)
       rect(this.ladderx1 , this.laddery2  , this.laddersx , 5)
+      image(rope,this.ladderx1 - 5,this.laddery1,10,this.laddersy)
+      image(rope,this.ladderx2 - 8,this.laddery1,10,this.laddersy)
+      image(miniplat ,this.ladderx1 -7 , this.laddery2  , this.laddersx +16 , 10)
     }
     if(!this.noimg){
       image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
@@ -176,8 +182,7 @@ class Platform {
       return(true)
   }} 
   onladder(){
-    if(pl.y + pl.sy < this.laddery2 +10   && pl.y + pl.sy > this.laddery2 -15 && pl.x < this.ladderx2 && pl.x + pl.sx> this.ladderx1 && pl.vy >= 0){
-      console.log("ladder touched")                  
+    if(pl.y + pl.sy < this.laddery2 +10   && pl.y + pl.sy > this.laddery2 -15 && pl.x < this.ladderx2 && pl.x + pl.sx> this.ladderx1 && pl.vy >= 0 && this.ladder){                
       return(true)                                                                                                                                                                  
   }}
 }
@@ -205,6 +210,11 @@ var bg0
 var bg0_1
 var bgv = 2
 var spr
+var miniplat
+var rope
+var time1
+var time2
+var timeelapsed
 function keyPressed(){
   if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
   if(dead){
@@ -212,6 +222,7 @@ function keyPressed(){
   }
 }
 function preload() {
+ time1 = Date.now();
  highscore = getItem('hs')
  spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
  platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
@@ -222,9 +233,13 @@ function preload() {
  ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
  bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
  bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
- 
+ miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
+ rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
 }
 function setup() {
+  time2 = Date.now()
+  timeelapsed = time2 - time1
+  console.log("preload took " + timeelapsed + "ms to load textures")
   createCanvas(ww, wh);
   bg1 = new bg(0,0)
   bg2 = new bg(0,-1500)
@@ -260,7 +275,7 @@ function setup() {
   plat.push(p4)
   v1 = new Vertex(600,550)
   v2 = new Vertex(800,500)
-  p6 = new Platform(v1,v2,pv,pvx,0.1,0.1)
+  p6 = new Platform(v1,v2,pv,pvx,0.1,0.001)
   plat.push(p6)
   v1 = new Vertex(450,350)
   v2 = new Vertex(650,300)
