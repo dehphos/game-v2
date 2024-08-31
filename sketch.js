@@ -94,7 +94,7 @@ class Score{
 
 }
 class Platform {
-  constructor(v1, v3, vy, vx , boost) {
+  constructor(v1, v3, vy, vx , boost , ladder) {
     this.x1 = v1.x
     this.y1 = v1.y
     this.x2 = v1.x
@@ -116,6 +116,7 @@ class Platform {
     this.sy = abs(this.y1 - this.y3)
     this.vy = pv
     this.vx = vx
+    if(ladder){this.ladder = true}else{this.ladder = false}
     this.vxb = false
     this.touched = false 
     this.noimg = false
@@ -140,12 +141,15 @@ class Platform {
   }
   draw(){
     //rect(this.x2,this.y2,this.sx,this.sy)
+
     if (this.boost){
-      rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
+     // rect(this.boostx1 , this.boosty1, this.boostsx, this.boostsy)
+      image(spr , this.boostx1 -15 , this.boosty1 -10 , this.boostsx +25 , this.boostsy+25)
     }
     if(!this.noimg){
-    image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
-    }}
+      image(platimg, this.x2, this.y2, this.sx, this.sy + 25)
+      }
+  }
   collide(){
     if(pl.y + pl.sy > this.y3 - 5 && pl.y + pl.sy < this.y1 && pl.x < this.x3 && pl.x + pl.sx> this.x1 && pl.vy >= 0){               
         return(true)                                                                                                                                                                      
@@ -179,6 +183,7 @@ var ch_l_j
 var bg0
 var bg0_1
 var bgv = 2
+var spr
 function keyPressed(){
   if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
   if(dead){
@@ -187,6 +192,7 @@ function keyPressed(){
 }
 function preload() {
  highscore = getItem('hs')
+ spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
  platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
  bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
  ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
@@ -233,7 +239,7 @@ function setup() {
   plat.push(p4)
   v1 = new Vertex(600,550)
   v2 = new Vertex(800,500)
-  p6 = new Platform(v1,v2,pv,pvx)
+  p6 = new Platform(v1,v2,pv,pvx,0.1)
   plat.push(p6)
   v1 = new Vertex(450,350)
   v2 = new Vertex(650,300)
@@ -287,19 +293,17 @@ function draw() {
   if(plat.length <= 7){
     pvx = (Math.floor(Math.random()*sc.c*0.1))
     if (Math.random() > 0.5){pvx = -pvx}
-    var xcor = Math.floor(Math.random() * 800)
-    var ycor = plat[6].y3 - 200
+    var xcor = Math.floor(Math.random() * 750 + 25)
+    var ycor = plat[plat.length-1].y3 - 200
     var v1 = new Vertex(xcor, ycor+50)
     var v2 = new Vertex(xcor+200, ycor)
     var nplat = new Platform(v1, v2, pv,pvx,Math.random())
     plat.push(nplat)
-    console.log("yeni platform eklendi")
   }
 
 
   for (var key in plat){      
     if(key > 0){
-      var mes = plat[key].y1 - plat[key -1].y1
       k2 = key -1}         
     plat[key].draw()
     plat[key].vy = pv
@@ -328,18 +332,18 @@ function draw() {
   if(keyIsPressed){
     if(keyIsDown(65)||keyIsDown(37)){                                        //                                                       
       pl.vx = -15
-      pl.last_left = true                                     //                                                          
+      pl.last_left = true                                                    //                                                          
     }else if(keyIsDown(68)||keyIsDown(39)){                                  //      KEYBOARD CONTROLS                                                                                                     
       pl.vx = 15 
-      pl.last_left = false                                    //                                                   
+      pl.last_left = false                                                   //                                                   
     }else if(!keyIsDown(68) && !keyIsDown(65) && !keyIsDown(39) && !keyIsDown(37)){pl.vx = 0}     //                                                          
-    if(keyIsDown(87) ||keyIsDown(38) ){                                       //
-      if(pl.onFloor == true || pl.onPlatform == true){        //                                                            
+    if(keyIsDown(87) ||keyIsDown(38) ){                                      //
+      if(pl.onFloor == true || pl.onPlatform == true){                       //                                                            
       inst = true    
-      pl.hasjumped = true                                         //      KEYBOARD CONTROLS  
-      pl.onPlatform = false                                   //                                                            
-      pl.vy = -22                                             //  
-      pl.ay = g                                               //                                  
+      pl.hasjumped = true                                                    //      KEYBOARD CONTROLS  
+      pl.onPlatform = false                                                  //                                                            
+      pl.vy = -22                                                            //  
+      pl.ay = g                                                              //                                  
     }}                                                             
   }else{
     pl.vx = 0
