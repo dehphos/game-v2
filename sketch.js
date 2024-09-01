@@ -71,7 +71,7 @@ class Score{
   constructor(c,h){
     this.h = h
     this.c = c
-    if(this.h === NaN){this.h = 0}
+    if(this.h === NaN || this.h == null){this.h = 0}
   }
   draw(){
     push()
@@ -220,6 +220,7 @@ var posxmobile = 700
 
 
 function startup(){
+
   bg1 = new bg(0,0)
   bg2 = new bg(0,-1500)
   bg3 = new bg(0,0)
@@ -317,6 +318,7 @@ function preload() {
  rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
 }
 function setup() {
+  frameRate(60)
   time2 = Date.now()
   timeelapsed = time2 - time1
   console.log("preload took " + timeelapsed + "ms to load textures")
@@ -459,6 +461,13 @@ function draw() {
   pl.update()
   pl.draw()
   sc.draw()
+  var frm = Math.floor(frameRate())
+  push()  
+  fill(0)
+  stroke(0)                                          
+  textSize(50)   
+  text("fps: " + frm, 450 , 80 )
+  pop()
   inst = false
 
   if(pl.onFloor){
