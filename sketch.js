@@ -215,7 +215,7 @@ var rope
 var time1
 var time2
 var timeelapsed
-var phone = false
+var phone = true
 var posxmobile
 
 
@@ -427,8 +427,9 @@ function draw() {
       pl.onPlatform = false                                                  //                                                            
       pl.vy = -22                                                            //  
       pl.ay = g 
-      pl.x = posxmobile
-  }}else{
+    }
+    pl.x = posxmobile
+  }else{
     pl.vx = 0
   }                                                         
   
