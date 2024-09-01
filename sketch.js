@@ -285,8 +285,20 @@ function keyPressed(){
 }
 
 function touchStarted(){
+  if(start == false){start = true}
   phone = true
   posxmobile = touches[0]
+  if(dead){
+    plat = []
+    pl = {}
+    startup()
+    pl.onPlatform = true                                                                                                          
+    pl.vy = 0                                                           
+    pl.ay = g  
+    dead = false
+    start = false
+    loop()
+  }
 }
 
 function preload() {
@@ -416,7 +428,7 @@ function draw() {
       pl.vy = -22                                                            //  
       pl.ay = g 
       pl.x = posxmobile
-  }else{
+  }}else{
     pl.vx = 0
   }                                                         
   
@@ -465,4 +477,3 @@ function draw() {
     dead = true
     noLoop()
   }}}
-
