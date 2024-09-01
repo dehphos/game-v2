@@ -38,7 +38,6 @@ class Startscreen{
     this.v = vy
   }
   draw(){
-
   }
 }
 class Vertex {
@@ -71,7 +70,7 @@ class Score{
   constructor(c,h){
     this.h = h
     this.c = c
-    if(this.h === NaN || this.h == null){this.h = 0}
+    if(this.h === NaN){this.h = 0}
   }
   draw(){
     push()
@@ -186,7 +185,59 @@ class Platform {
       return(true)                                                                                                                                                                  
   }}
 }
-
+class Color{
+  constructor(r,g,b){
+    this.r = r
+    this.g = g 
+    this.b = b
+  }
+}
+class Button {
+  constructor(x, y, sx, sy, c, txt, hc, txtconfirm){
+    this.x1=x
+    this.y1=y
+    this.sx=sx
+    this.sy=sy
+    this.x2 = this.x1 + this.sx
+    this.y2 = this.y1 + this.sy
+    this.ogcolor = c
+    this.hovercolor = hc
+    this.hovering = false
+    this.c = this.ogcolor
+    this.t1 = txt
+    this.t2 = txtconfirm
+    this.txtsz = 70
+    this.txtx = 50
+    this.txty = (this.sy/2) - 30
+    if(this.t2 === undefined){this.t2 = this.t1}
+    if(this.hovercolor === undefined){this.hovercolor = this.ogcolor}
+  }
+  hover(){
+    if(mouseX > this.x1 && mouseX < this.x2 +15 && mouseY > this.y1 && mouseY < this.y2 +15 && dead){
+      this.c = this.hovercolor
+      return(true)
+    }else{this.nohover()}
+  }
+  nohover(){
+    this.c = this.ogcolor
+  }
+  draw(){
+    this.hover()
+    push()
+    stroke(this.c.r,this.c.g,this.c.b)
+    fill(this.c.r,this.c.g,this.c.b)
+    rect(this.x1,this.y1,this.sx,15)
+    rect(this.x1,this.y2,this.sx,15)
+    rect(this.x1,this.y1,15,this.sy)
+    rect(this.x2,this.y1,15,this.sy +15)
+    textSize(this.txtsz);
+    if(sc.h == 0){
+      text(this.t2,this.x1 + this.txtx, this.y2 - this.txty)
+    }else{
+    text(this.t1,this.x1 + this.txtx, this.y2 - this.txty)}
+    pop()
+    }
+  }
 
 var start = false
 var ww = 1000
@@ -197,7 +248,6 @@ var plat = []
 var pv = 4
 var pvd = 4
 var highscore
-var hsreset = false
 var dead = false
 var pvx = 0
 var platimg
@@ -219,8 +269,61 @@ var phone = false
 var posxmobile = 700
 
 
-function startup(){
+function keyPressed(){
+  phone = false
+  if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
+  if(dead){
+    plat = []
+    pl = {}
+    setup()
+    pl.onPlatform = true                                                                                                          
+    pl.vy = 0                                                           
+    pl.ay = g  
+    dead = false
+    start = false
+    loop()
+  }
+}
 
+function mousePressed(){
+  if(start == false){start = true}
+  phone = true
+  if(hsreset.hover()){
+    resetHighScore()
+  }else if(dead && !hsreset.hover()){
+    plat = []
+    pl = {}
+    setup()
+    pl.onPlatform = true                                                                                                          
+    pl.vy = 0                                                           
+    pl.ay = g  
+    dead = false
+    start = false
+    loop()
+  }
+}
+
+function preload() {
+ highscore = getItem('hs')
+ spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
+ platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
+ bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
+ ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
+ ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
+ ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
+ ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
+ bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
+ bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
+ miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
+ rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
+}
+function setup() {
+  frameRate(60)
+  createCanvas(ww, wh);
+  highscore = getItem('hs')
+  c1 = new Color(255, 0, 170)
+  c2 = new Color(247, 106, 200)
+  hsreset = new Button(200,1000,600,200,c1,"Reset Highscore",c2,"Highscore Reset!")
   bg1 = new bg(0,0)
   bg2 = new bg(0,-1500)
   bg3 = new bg(0,0)
@@ -270,69 +373,12 @@ function startup(){
   p7 = new Platform(v1,v2,pv,pvx)
   plat.push(p7)
 }
-function keyPressed(){
-  phone = false
-  if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
-  if(dead){
-    plat = []
-    pl = {}
-    startup()
-    pl.onPlatform = true                                                                                                          
-    pl.vy = 0                                                           
-    pl.ay = g  
-    dead = false
-    start = false
-    loop()
-  }
-}
-
-function mousePressed(){
-  if(start == false){start = true}
-  phone = true
-  if(dead){
-    plat = []
-    pl = {}
-    startup()
-    pl.onPlatform = true                                                                                                          
-    pl.vy = 0                                                           
-    pl.ay = g  
-    dead = false
-    start = false
-    loop()
-  }
-}
-
-function preload() {
- time1 = Date.now();
- highscore = getItem('hs')
- spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
- platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
- bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
- ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
- ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
- ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
- ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
- bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
- bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
- miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
- rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
-}
-function setup() {
-  frameRate(60)
-  time2 = Date.now()
-  timeelapsed = time2 - time1
-  console.log("preload took " + timeelapsed + "ms to load textures")
-  createCanvas(ww, wh);
-  startup()
-  button = createButton('reset highscore');
-  button.position(300,1500)
-  button.size(400, 50)
-  button.style('font-size', '35px');
-  button.mousePressed(resetHighScore)
-}
 
 function resetHighScore(){
-  hsreset = true
+  sc.c = 0
+  sc.h = 0
+  storeItem('hs' , 0)
+  sc.draw()
 }
 function draw() {
   posxmouse = mouseX
@@ -407,7 +453,7 @@ function draw() {
     }
   }
 
-  if(keyIsPressed && !phone){
+  if(keyIsPressed && !phone && !dead){
     if(keyIsDown(65)||keyIsDown(37)){                                        //                                                       
       pl.vx = -15
       pl.last_left = true                                                    //                                                          
@@ -423,7 +469,7 @@ function draw() {
       pl.vy = -22                                                            //  
       pl.ay = g                                                              //                                  
     }}                                                             
-  }else if(phone){
+  }else if(phone && !dead){
     if(pl.onFloor == true || pl.onPlatform == true){                         //                                                            
       inst = true    
       pl.hasjumped = true                                                    //      MOBILE CONTROLS 
@@ -451,14 +497,14 @@ function draw() {
     pl.x = -20
   }
 
-  for(var key in plat){
-    plat[key].update()
-  }   
+
+  if(!dead){
+  for(var key in plat){plat[key].update()}
   bg1.update()
   bg2.update()
   bg3.update()
   bg4.update()
-  pl.update()
+  pl.update()}
   pl.draw()
   sc.draw()
   var frm = Math.floor(frameRate())
@@ -469,6 +515,10 @@ function draw() {
   text("fps: " + frm, 450 , 80 )
   pop()
   inst = false
+
+
+
+
 
   if(pl.onFloor){
     fill(0)
@@ -483,8 +533,8 @@ function draw() {
     rotate(-PI/2)
     image(ch_r_j, -50, 0 ,pl.sx+100 ,pl.sy+80)
     pop()
-    if(hsreset){storeItem("hs",0)}else{
-    storeItem("hs",sc.h)}
+    if(highscore < sc.h){
+      storeItem('hs', sc.h)}
+    hsreset.draw()
     dead = true
-    noLoop()
   }}}
