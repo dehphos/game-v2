@@ -31,7 +31,7 @@ class Player {
     //rect(pl.x,pl.y,pl.sx,pl.sy)
   }
 }
-class Startup{
+class Startscreen{
   constructor(x,y,vy){
     this.x = x
     this.y = y
@@ -215,32 +215,11 @@ var rope
 var time1
 var time2
 var timeelapsed
-function keyPressed(){
-  if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
-  if(dead){
-    window.location.reload()
-  }
-}
-function preload() {
- time1 = Date.now();
- highscore = getItem('hs')
- spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
- platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
- bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
- ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
- ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
- ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
- ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
- bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
- bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
- miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
- rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
-}
-function setup() {
-  time2 = Date.now()
-  timeelapsed = time2 - time1
-  console.log("preload took " + timeelapsed + "ms to load textures")
-  createCanvas(ww, wh);
+var phone = false
+var posxmobile
+
+
+function startup(){
   bg1 = new bg(0,0)
   bg2 = new bg(0,-1500)
   bg3 = new bg(0,0)
@@ -250,8 +229,8 @@ function setup() {
   bg4.img = bg0_1
   sc = new Score(0,highscore)
   pl = new Player(700, 1280, 50, 80)
-  v1 = new Vertex(0,1400)
-  v2 = new Vertex(1000,1350)
+  v1 = new Vertex(-200,1400)
+  v2 = new Vertex(1200,1350)
   p1 = new Platform(v1,v2,pv,pvx)
   p1.noimg = true
   plat.push(p1)
@@ -289,6 +268,48 @@ function setup() {
   v2 = new Vertex(400,-100)
   p7 = new Platform(v1,v2,pv,pvx)
   plat.push(p7)
+}
+function keyPressed(){
+  if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
+  if(dead){
+    plat = []
+    pl = {}
+    startup()
+    pl.onPlatform = true                                                                                                          
+    pl.vy = 0                                                           
+    pl.ay = g  
+    dead = false
+    start = false
+    loop()
+  }
+}
+
+function touchStarted(){
+  phone = true
+  posxmobile = touches[0]
+}
+
+function preload() {
+ time1 = Date.now();
+ highscore = getItem('hs')
+ spr = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/748ed8f6a87921bda2f514ddbf0e1271d99147ba/spring.png', console.log("spr image loaded"))
+ platimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/bc851348d37e0ba3a01c5c8ac2db1132421a6888/platform.png',console.log("platform image loaded"))
+ bgimg = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/69670d00238bd21c635640bba1f2444200b3658f/bg%20img.png', console.log("background image loaded"))
+ ch_r_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20jumping.png',console.log("chrj image loaded"))
+ ch_r = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20right%20idle.png',console.log("chr image loaded"))
+ ch_l = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20idle.png',console.log("chl image loaded"))
+ ch_l_j = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/0b435786d8a0f2cd9a73d27b982b856779e7148f/char%20left%20jumping.png',console.log("chlj image loaded"))
+ bg0 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/22e1449de2a68543ac4f7a9046e68118fbe9c4d9/bg0%20img.png', console.log("bg0 loaded"))
+ bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
+ miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
+ rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
+}
+function setup() {
+  time2 = Date.now()
+  timeelapsed = time2 - time1
+  console.log("preload took " + timeelapsed + "ms to load textures")
+  createCanvas(ww, wh);
+  startup()
   button = createButton('reset highscore');
   button.position(300,1500)
   button.size(400, 50)
@@ -371,7 +392,7 @@ function draw() {
     }
   }
 
-  if(keyIsPressed){
+  if(keyIsPressed && !phone){
     if(keyIsDown(65)||keyIsDown(37)){                                        //                                                       
       pl.vx = -15
       pl.last_left = true                                                    //                                                          
@@ -387,6 +408,14 @@ function draw() {
       pl.vy = -22                                                            //  
       pl.ay = g                                                              //                                  
     }}                                                             
+  }else if(phone){
+    if(pl.onFloor == true || pl.onPlatform == true){                         //                                                            
+      inst = true    
+      pl.hasjumped = true                                                    //      MOBILE CONTROLS 
+      pl.onPlatform = false                                                  //                                                            
+      pl.vy = -22                                                            //  
+      pl.ay = g 
+      pl.x = posxmobile
   }else{
     pl.vx = 0
   }                                                         
