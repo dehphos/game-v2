@@ -216,7 +216,7 @@ var time1
 var time2
 var timeelapsed
 var phone = true
-var posxmobile
+var posxmobile = 700
 
 
 function startup(){
@@ -287,7 +287,7 @@ function keyPressed(){
 function touchStarted(){
   if(start == false){start = true}
   phone = true
-  posxmobile = touches[0]
+  posxmobile = touches[0].x
   if(dead){
     plat = []
     pl = {}
@@ -299,6 +299,9 @@ function touchStarted(){
     start = false
     loop()
   }
+}
+function touchMoved(){
+  posxmobile = touches[0].x
 }
 
 function preload() {
@@ -429,6 +432,7 @@ function draw() {
       pl.ay = g 
     }
     pl.x = posxmobile
+    text(posxmobile,300,500)
   }else{
     pl.vx = 0
   }                                                         
