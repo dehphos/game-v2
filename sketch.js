@@ -215,7 +215,7 @@ var rope
 var time1
 var time2
 var timeelapsed
-var phone = true
+var phone = false
 var posxmobile = 700
 
 
@@ -270,6 +270,7 @@ function startup(){
   plat.push(p7)
 }
 function keyPressed(){
+  phone = false
   if (keyCode === 27 || key == "p") {start = "paused"}else{start = true}
   if(dead){
     plat = []
