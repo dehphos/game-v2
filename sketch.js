@@ -284,10 +284,9 @@ function keyPressed(){
   }
 }
 
-function touchStarted(){
+function mousePressed(){
   if(start == false){start = true}
   phone = true
-  posxmobile = touches[0].x
   if(dead){
     plat = []
     pl = {}
@@ -299,9 +298,6 @@ function touchStarted(){
     start = false
     loop()
   }
-}
-function touchMoved(){
-  posxmobile = touches[0].x
 }
 
 function preload() {
@@ -336,6 +332,7 @@ function resetHighScore(){
   hsreset = true
 }
 function draw() {
+  posxmouse = mouseX
   if(start == false){
     bg4.draw()
     bg3.draw()
@@ -431,8 +428,7 @@ function draw() {
       pl.vy = -22                                                            //  
       pl.ay = g 
     }
-    pl.x = posxmobile
-    text(posxmobile,300,500)
+    pl.x = mouseX
   }else{
     pl.vx = 0
   }                                                         
