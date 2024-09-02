@@ -213,7 +213,7 @@ class Button {
     if(this.hovercolor === undefined){this.hovercolor = this.ogcolor}
   }
   hover(){
-    if(mouseX > this.x1 && mouseX < this.x2 +15 && mouseY > this.y1 && mouseY < this.y2 +15 && dead){
+    if(mouseX_c > this.x1 && mouseX_c < this.x2 +15 && mouseY_c > this.y1 && mouseY_c < this.y2 +15 && dead){
       this.c = this.hovercolor
       return(true)
     }else{this.nohover()}
@@ -267,7 +267,10 @@ var time2
 var timeelapsed
 var phone = false
 var posxmobile = 700
-
+var cssscale
+var mouseX_c
+var mouseY_c
+var zoomslider
 
 function keyPressed(){
   phone = false
@@ -285,7 +288,8 @@ function keyPressed(){
   }
 }
 
-function mousePressed(){
+function mouseClicked(){
+  if(mouseX_c > 0 && mouseX_c < ww && mouseY_c > 0 && mouseY_c < wh){
   if(start == false){start = true}
   phone = true
   if(hsreset.hover()){
@@ -301,7 +305,7 @@ function mousePressed(){
     start = false
     loop()
   }
-}
+}}
 
 function preload() {
  highscore = getItem('hs')
@@ -316,6 +320,7 @@ function preload() {
  bg0_1 = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/cecfc21f151403b73e071060b5393088aa7cded5/bg0_1%20img.png', console.log("bg0_1 loaded"))
  miniplat = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/mini%20platform.png', console.log('miniplat loaded'))
  rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
+
 }
 function setup() {
   var pvx = 0
@@ -373,8 +378,18 @@ function setup() {
   v2 = new Vertex(400,-100)
   p7 = new Platform(v1,v2,pv,pvx)
   plat.push(p7)
+  if(!zoomslider){
+    zoomslider = createSlider(0,1,0.8,0.01)
+    zoomslider.addClass("zoomslider")
+  }
 }
-
+function recalculateMouseCoordinates(){
+  cssscale = parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue('--scalevar'));
+  document.documentElement.style.setProperty('--scalevar', zoomslider.value());
+  mouseX_c = mouseX / cssscale
+  mouseY_c = mouseY / cssscale
+  posxmouse = mouseX_c
+}
 function resetHighScore(){
   sc.c = 0
   sc.h = 0
@@ -382,7 +397,7 @@ function resetHighScore(){
   sc.draw()
 }
 function draw() {
-  posxmouse = mouseX
+  recalculateMouseCoordinates()
   if(start == false){
     bg4.draw()
     bg3.draw()
@@ -478,7 +493,7 @@ function draw() {
       pl.vy = -22                                                            //  
       pl.ay = g 
     }
-    pl.x = mouseX
+    pl.x = mouseX_c
   }else{
     pl.vx = 0
   }                                                         

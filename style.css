@@ -1,14 +1,23 @@
+:root {
+  --scalevar : 0.6;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none; 
+  
 }
 
 canvas {
   display: block;
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+  zoom: var(--scalevar);
+  -webkit-user-select: none;
+  -ms-user-select: none; 
+  user-select: none; 
+}
+.zoomslider{
+  width: 300px;
 }
