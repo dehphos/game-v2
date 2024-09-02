@@ -318,6 +318,7 @@ function preload() {
  rope = loadImage('https://raw.githubusercontent.com/dehphos/game-v2/320e22682227a5a60e35da4245cbda5e40e065c6/rope.png',console.log('rope image loaded'))
 }
 function setup() {
+  var pvx = 0
   frameRate(60)
   createCanvas(ww, wh);
   highscore = getItem('hs')
