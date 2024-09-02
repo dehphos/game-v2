@@ -46,7 +46,7 @@ class Vertex {
     this.y = y
   }
 }
-class bg{
+class Bg{
   constructor(x,y){
     this.x = x
     this.y = y
@@ -324,9 +324,9 @@ function setup() {
   c1 = new Color(255, 0, 170)
   c2 = new Color(247, 106, 200)
   hsreset = new Button(200,1000,600,200,c1,"Reset Highscore",c2,"Highscore Reset!")
-  bg1 = new bg(0,0)
-  bg2 = new bg(0,-1500)
-  bg3 = new bg(0,0)
+  bg1 = new Bg(0,0)
+  bg2 = new Bg(0,-1500)
+  bg3 = new Bg(0,0)
   bg3.img = bg0
   bg3.v = 4
   bg4 = new bg(0,0)
