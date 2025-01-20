@@ -326,6 +326,7 @@ function setup() {
   var pvx = 0
   frameRate(60)
   createCanvas(ww, wh);
+  pixelDensity(1)
   highscore = getItem('hs')
   c1 = new Color(255, 0, 170)
   c2 = new Color(247, 106, 200)
